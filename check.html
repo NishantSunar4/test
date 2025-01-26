@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For You</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        position: relative;
+        flex-direction: column;
+        background: #f8f1f7;
+      }
+
+      .message-container {
+        position: relative;
+        text-align: center;
+        background: white;
+        padding: 20px 40px;
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        overflow: hidden;
+      }
+
+      .message-container h1 {
+        font-size: 18px;
+        color: #333;
+        transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+      }
+
+      .message-container .sparkle {
+        color: gold;
+        font-size: 18px;
+        margin-right: 5px;
+      }
+
+      .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+      }
+
+      .btn {
+        padding: 15px 25px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s;
+        color: white;
+      }
+
+      .yes-btn {
+        background-color: #ff6969;
+      }
+
+      .yes-btn:hover {
+        background-color: #df2f3d;
+        transform: scale(1.1);
+      }
+
+      .no-btn {
+        background-color: #4982dd;
+      }
+
+      .no-btn:hover {
+        background-color: #3161b6;
+        transform: scale(1.1);
+      }
+
+      .black-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 20;
+      }
+
+      .lights-on-btn,
+      .party-light-btn {
+        padding: 15px 25px;
+        background-color: #ffcc00;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        color: white;
+        position: absolute;
+        top: 20%; /* Same position for both buttons */
+      }
+
+      .lights-on-btn:hover,
+      .party-light-btn:hover {
+        background-color: #ffaa00;
+        transform: scale(1.1);
+      }
+
+      .party-light-btn {
+        background-color: #ff00ff;
+        top: 20%; /* Same as lights-on button */
+      }
+
+      /* Animation for brightness */
+      @keyframes brightnessChange {
+        0% {
+          filter: brightness(1);
+        }
+        50% {
+          filter: brightness(2);
+        }
+        100% {
+          filter: brightness(1);
+        }
+      }
+
+      .circles-container {
+        position: absolute;
+        top: 5%; /* Position at the top */
+        display: flex;
+        justify-content: space-around;
+        gap: 10px;
+        z-index: 30;
+        width: 100%; /* Full width */
+      }
+
+      .circle {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        animation: brightnessChange 1s infinite; /* Apply brightness animation */
+      }
+
+      .circle:nth-child(1) {
+        background-color: yellow;
+      }
+
+      .circle:nth-child(2) {
+        background-color: red;
+      }
+
+      .circle:nth-child(3) {
+        background-color: green;
+      }
+
+      .circle:nth-child(4) {
+        background-color: blue;
+      }
+
+      .circle:nth-child(5) {
+        background-color: purple;
+      }
+
+      .circle:nth-child(6) {
+        background-color: red;
+      }
+
+      .circle:nth-child(7) {
+        background-color: orange;
+      }
+
+      @media (max-width: 768px) {
+        /* Only show 3 circles for mobile */
+        .circle:nth-child(n + 4) {
+          display: none;
+        }
+
+        /* Adjust font sizes and padding for mobile */
+        .message-container {
+          padding: 15px 20px;
+        }
+
+        .message-container h1 {
+          font-size: 16px;
+        }
+
+        .btn {
+          padding: 10px 20px;
+          font-size: 14px;
+        }
+
+        .btn-container {
+          gap: 10px;
+        }
+
+        .image-container {
+          width: 200px;
+          height: 200px;
+        }
+      }
+
+      @media (min-width: 768px) {
+        /* Only show 7 circles for laptop/desktop */
+        .circle:nth-child(n + 8) {
+          display: none;
+        }
+      }
+
+      /* Heart Styles */
+      .heart {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background-color: pink;
+        transform: rotate(45deg);
+        animation: floatUp 7s infinite;
+        z-index: 1;
+      }
+
+      .heart:before,
+      .heart:after {
+        content: "";
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background-color: pink;
+        border-radius: 50%;
+      }
+
+      .heart:before {
+        left: 0;
+        top: -15px;
+      }
+
+      .heart:after {
+        left: 15px;
+        top: 0;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) scale(1);
+          opacity: 0.7;
+        }
+        50% {
+          transform: translateY(-50vh) scale(1.1);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) scale(0.9);
+          opacity: 0;
+        }
+      }
+
+      /* Image reveal animation */
+      .image-container {
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 300px;
+        overflow: hidden;
+        z-index: 40;
+      }
+
+      .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        animation: reveal 1s ease-in;
+      }
+
+      @keyframes reveal {
+        0% {
+          transform: translateY(-100%);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+      .balloon {
+        position: absolute;
+        bottom: 0;
+        width: 30px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: red;
+        animation: floatUp 5s ease-in infinite;
+        z-index: 2;
+      }
+
+      .balloon::before {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 10px;
+        background-color: #000;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+        /* 50% {
+          opacity: 1;
+          transform: translateY(-50vh) scale(1.1);
+        } */
+        100% {
+          opacity: 0.5;
+          transform: translateY(-100vh) scale(0.9);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="message-container">
+      <h1 id="message">
+        <span class="sparkle">✨</span>It's Your Special Day!<span
+          class="sparkle"
+          >✨</span
+        >
+      </h1>
+      <div id="btn-container" class="btn-container">
+        <button class="btn yes-btn" id="yes-btn">Yes</button>
+        <button class="btn no-btn" id="no-btn">No</button>
+      </div>
+    </div>
+
+    <script>
+      function changeMessage(newMessage) {
+        const messageElement = document.getElementById("message");
+        messageElement.style.opacity = "0";
+        messageElement.style.transform = "scale(0.8)";
+
+        setTimeout(() => {
+          messageElement.innerHTML = newMessage;
+          messageElement.style.opacity = "1";
+          messageElement.style.transform = "scale(1)";
+        }, 1000);
+      }
+
+      function showOptions() {
+        const btnContainer = document.getElementById("btn-container");
+        btnContainer.style.opacity = "1";
+      }
+
+      setTimeout(() => {
+        changeMessage(
+          '<span class="sparkle">✨</span>To make it more special<span class="sparkle">✨</span>'
+        );
+      }, 3000);
+
+      setTimeout(() => {
+        changeMessage("✨I made something for you✨");
+      }, 6000);
+
+      setTimeout(() => {
+        changeMessage("✨Wanna see what I made?✨");
+      }, 9000);
+
+      setTimeout(() => {
+        showOptions();
+      }, 10000);
+
+      let heartInterval;
+
+      function createHeart() {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 2 + 5 + "s";
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 3000);
+      }
+
+      function stopHearts() {
+        clearInterval(heartInterval); // Stops the hearts after lights on button is clicked
+      }
+
+      function showBlackScreen() {
+        const blackScreen = document.createElement("div");
+        blackScreen.classList.add("black-screen");
+        const lightsOnBtn = document.createElement("button");
+        lightsOnBtn.classList.add("lights-on-btn");
+        lightsOnBtn.textContent = "Lights on";
+        blackScreen.appendChild(lightsOnBtn);
+        document.body.appendChild(blackScreen);
+
+        lightsOnBtn.addEventListener("click", () => {
+          document.body.removeChild(blackScreen); // Remove black screen
+          stopHearts(); // Stop the hearts from showing
+          showPartyLight(); // Only show party light button with white background
+        });
+      }
+
+      function showPartyLight() {
+        // Remove all existing content except party light button
+        const body = document.body;
+        body.innerHTML = ""; // Clear the body content
+
+        // Set background color to white
+        body.style.backgroundColor = "#f8f1f7";
+
+        // Create the Party light button at the same position
+        const partyLightBtn = document.createElement("button");
+        partyLightBtn.classList.add("party-light-btn");
+        partyLightBtn.textContent = "Party light";
+        document.body.appendChild(partyLightBtn);
+
+        partyLightBtn.addEventListener("click", () => {
+          // Add the small circles at the top
+          const circlesContainer = document.createElement("div");
+          circlesContainer.classList.add("circles-container");
+
+          const numCircles = window.innerWidth >= 768 ? 7 : 3;
+          for (let i = 0; i < numCircles; i++) {
+            const circle = document.createElement("div");
+            circle.classList.add("circle");
+            circlesContainer.appendChild(circle);
+          }
+
+          document.body.appendChild(circlesContainer);
+
+          // "Decorate" the button by adding animation or effects
+          partyLightBtn.style.transition = "all 0.5s ease"; // Add smooth transition
+          partyLightBtn.style.transform = "scale(1.1)"; // Slightly scale up the button
+          partyLightBtn.style.backgroundColor = "#ff69b4"; // Change the background color
+          partyLightBtn.textContent = "Decorate"; // Change button text
+          partyLightBtn.style.color = "#ffffff"; // Change text color to white
+
+          // Change button text to "Fly Balloons" on click
+          partyLightBtn.addEventListener("click", () => {
+            partyLightBtn.textContent = "Have a good day";
+            generateBalloons();
+            
+
+            // Create the image container
+            const imageContainer = document.createElement("div");
+            imageContainer.classList.add("image-container");
+
+            // Create the image element
+            // Create the image element
+            const image = document.createElement("img");
+            image.src = "banner.png";
+            imageContainer.appendChild(image);
+
+            // Append the image container to the body
+            document.body.appendChild(imageContainer);
+          });
+        });
+      }
+
+      const yesBtn = document.getElementById("yes-btn");
+      yesBtn.addEventListener("click", () => {
+        changeMessage("✨Have a look✨");
+        document.getElementById("btn-container").style.display = "none"; // Remove buttons
+        setTimeout(showBlackScreen, 4000); // Show black screen after 2 seconds
+      });
+
+      const noBtn = document.getElementById("no-btn");
+      noBtn.addEventListener("click", () => {
+        changeMessage("No🥺! Still have to watch😁");
+        document.getElementById("btn-container").style.display = "none"; // Remove buttons
+        setTimeout(showBlackScreen, 4000); // Show black screen after 2 seconds
+      });
+
+      heartInterval = setInterval(createHeart, 500); // Generate hearts every 500ms
+      function createBalloon() {
+        const balloon = document.createElement("div");
+        balloon.classList.add("balloon");
+
+        const colors = ["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#FFD700"];
+        balloon.style.backgroundColor =
+          colors[Math.floor(Math.random() * colors.length)];
+
+        balloon.style.left = Math.random() * 100 + "vw";
+        balloon.style.animationDuration = Math.random() * 2 + 3 + "s";
+
+        document.body.appendChild(balloon);
+
+        setTimeout(() => {
+          balloon.remove();
+        }, 5000);
+      }
+
+      function generateBalloons() {
+        const interval = setInterval(() => {
+          createBalloon();
+        }, 300); // Adjust the interval for more/less balloons
+
+        // Stop after a certain number of balloons or time
+        setTimeout(() => {
+          clearInterval(interval);
+        },5000); // Adjust duration as needed
+      }
+    </script>
+  </body>
+</html>
